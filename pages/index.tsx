@@ -11,12 +11,38 @@ const Home: NextPage = (props) => {
   const [bookTitle, setBookTitle] = useState("");
   const [bookAuthor, setBookAuthor] = useState("");
   const [bookGenere, setBookGenere] = useState("");
+  const [APIResponse, setAPIResponse] = useState(null);
+  
+  useEffect(() => {
+    console.log("Book Title: ", bookTitle);
+    console.log("Book Author: ", bookAuthor);
+    console.log("Book Genere: ", bookGenere);
+    console.log("API Res: ", APIResponse);
+  },[bookTitle, bookAuthor, bookGenere])
+
+  const readDB =async () => {
+    try{
+      const response = await fetch("/api/books", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      setAPIResponse(await response.json());
+      if (response.status !== 200) {
+        console.log("something went wrong");
+      } else {
+        resetForm();
+        console.log("read DB successfully !!!");
+      }
+    }catch(error){
+      console.log("There was an error reading from DB: ", error)
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const body = { bookTitle, bookAuthor, bookGenere };
     try {
-      const response = await fetch("/api/inquiry", {
+      const response = await fetch("/api/books", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -26,6 +52,7 @@ const Home: NextPage = (props) => {
         //set an error banner here
       } else {
         resetForm();
+        readDB();
         console.log("form submitted successfully !!!");
         //set a success banner here
       }
@@ -36,10 +63,9 @@ const Home: NextPage = (props) => {
   };
 
   const resetForm = () => {
-    setFirstName("");
-    setEmail("");
-    setSubject("");
-    setMessage("");
+    setBookTitle("");
+    setBookAuthor("");
+    setBookGenere("");
   };
 
   return (
@@ -159,7 +185,11 @@ const Home: NextPage = (props) => {
                             </h1>
                           </div>
 
-                          <div className="flex flex-col items-start gap-5 mb-5">
+                          <form
+                            onSubmit={(e)=>handleSubmit(e)}
+                            method="POST"
+                            className="flex flex-col items-start gap-5 mb-5"
+                          >
                             {/* place code here */}
                             <div className="flex flex-col gap-3 w-full justify-center">
                               <div className="flex flex-col gap-2">
@@ -186,17 +216,24 @@ const Home: NextPage = (props) => {
                                   id="author-name"
                                   name="author-name"
                                   type="text"
-                                  onChange={(e)=>setBookAuthor(e.target.value)}
+                                  onChange={(e) =>
+                                    setBookAuthor(e.target.value)
+                                  }
                                   className={`w-72 h-7 pl-2 border-2 rounded-sm text-md z-12 focus:outline-none`}
                                 />
-                                <label htmlFor='genere' className="text-xs text-slate-500">
+                                <label
+                                  htmlFor="genere"
+                                  className="text-xs text-slate-500"
+                                >
                                   Genere:
                                 </label>
                                 <input
                                   id="genere"
                                   name="genere"
                                   type="text"
-                                  onChange={(e) => setBookGenere(e.target.value)}
+                                  onChange={(e) =>
+                                    setBookGenere(e.target.value)
+                                  }
                                   className={`w-72 h-7 pl-2 border-2 rounded-sm text-md z-12 focus:outline-none`}
                                 />
                               </div>
@@ -211,7 +248,7 @@ const Home: NextPage = (props) => {
                                 Add Book
                               </button>
                             </div>
-                          </div>
+                          </form>
                         </div>
                       </div>
                     </motion.div>

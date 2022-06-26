@@ -14,7 +14,7 @@ export default async function handler(req: any, res: any) {
   }
 }
 
-async function addBook(req: any, res: any) {
+async function addBook(req, res) {
   const body = req.body;
   try {
     const newEntry = await prisma.bookSuggestion.create({
@@ -28,10 +28,12 @@ async function addBook(req: any, res: any) {
   } catch (error) {
     console.error("Request error", error);
     res.status(500).json({ error: "Error adding in book", success: false });
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
-async function readBooks (req: any, res: any) {
+async function readBooks (req, res) {
   try{
     const allbooks = await prisma.bookSuggestion.findMany();
     return res.status(200).json(allbooks, {success: true});
