@@ -14,14 +14,14 @@ export default async function handler(req: any, res: any) {
   }
 }
 
-const addBook = () => async (req: any, res: any) {
+async function addBook(req: any, res: any) {
   const body = req.body;
   try {
     const newEntry = await prisma.bookSuggestion.create({
       data: {
-        bookTitle: body.title,
-        bookAuthor: body.author,
-        bookGenere: body.genere
+        bookTitle: body.bookTitle,
+        bookAuthor: body.bookAuthor,
+        bookGenere: body.bookGenere
       }
     });
     return res.status(200).json(newEntry, { success: true });
@@ -31,8 +31,7 @@ const addBook = () => async (req: any, res: any) {
   }
 }
 
-const readBooks = () => async (req: any, res: any) {
-  const body = req.body;
+async function readBooks (req: any, res: any) {
   try{
     const allbooks = await prisma.bookSuggestion.findMany();
     return res.status(200).json(allbooks, {success: true});

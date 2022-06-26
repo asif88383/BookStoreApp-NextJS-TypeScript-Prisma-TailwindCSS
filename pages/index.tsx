@@ -8,6 +8,39 @@ import {BsFillCloudLightningRainFill} from "react-icons/bs"
 
 const Home: NextPage = (props) => {
   const [isAnimating, setIsAnimating] = useState(false);
+  const [bookTitle, setBookTitle] = useState("");
+  const [bookAuthor, setBookAuthor] = useState("");
+  const [bookGenere, setBookGenere] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const body = { bookTitle, bookAuthor, bookGenere };
+    try {
+      const response = await fetch("/api/inquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (response.status !== 200) {
+        console.log("something went wrong");
+        //set an error banner here
+      } else {
+        resetForm();
+        console.log("form submitted successfully !!!");
+        //set a success banner here
+      }
+      //check response, if success is false, dont take them to success page
+    } catch (error) {
+      console.log("there was an error submitting", error);
+    }
+  };
+
+  const resetForm = () => {
+    setFirstName("");
+    setEmail("");
+    setSubject("");
+    setMessage("");
+  };
 
   return (
     <div className={styles.container}>
@@ -140,6 +173,7 @@ const Home: NextPage = (props) => {
                                   id="book-title"
                                   name="book-title"
                                   type="text"
+                                  onChange={(e) => setBookTitle(e.target.value)}
                                   className={`w-72 h-7 pl-2 border-2 rounded-sm text-md z-12 focus:outline-none`}
                                 />
                                 <label
@@ -152,6 +186,7 @@ const Home: NextPage = (props) => {
                                   id="author-name"
                                   name="author-name"
                                   type="text"
+                                  onChange={(e)=>setBookAuthor(e.target.value)}
                                   className={`w-72 h-7 pl-2 border-2 rounded-sm text-md z-12 focus:outline-none`}
                                 />
                                 <label htmlFor='genere' className="text-xs text-slate-500">
@@ -161,6 +196,7 @@ const Home: NextPage = (props) => {
                                   id="genere"
                                   name="genere"
                                   type="text"
+                                  onChange={(e) => setBookGenere(e.target.value)}
                                   className={`w-72 h-7 pl-2 border-2 rounded-sm text-md z-12 focus:outline-none`}
                                 />
                               </div>
