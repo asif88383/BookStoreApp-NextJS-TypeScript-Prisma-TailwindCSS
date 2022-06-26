@@ -1,17 +1,35 @@
-import type { NextPage } from 'next'
+import { GetStaticProps, NextPage, InferGetStaticPropsType } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import { AnimatePresence, motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, JSXElementConstructor, ReactElement, ReactFragment, ReactPortal } from "react";
 import {BsFillCloudLightningRainFill} from "react-icons/bs"
 
-const Home: NextPage = (props) => {
+// export const getStaticProps: GetStaticProps = async () => {
+//     const response = await fetch("/api/books");
+//     const data = await response.json();
+//     return {
+//       props: {booksData: data}
+//     }
+// };
+
+// interface myBookData {
+//   bookTitle: string;
+//   bookAuthor: string;
+//   bookGenere: string;
+// }
+
+// type Props = {
+//   booksData: myBookData[];
+// };
+
+const Home: NextPage = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [bookTitle, setBookTitle] = useState("");
   const [bookAuthor, setBookAuthor] = useState("");
   const [bookGenere, setBookGenere] = useState("");
-  const [APIResponse, setAPIResponse] = useState(null);
+  const [APIResponse, setAPIResponse] = useState([]);
   
   useEffect(() => {
     console.log("Book Title: ", bookTitle);
@@ -186,7 +204,7 @@ const Home: NextPage = (props) => {
                           </div>
 
                           <form
-                            onSubmit={(e)=>handleSubmit(e)}
+                            onSubmit={(e) => handleSubmit(e)}
                             method="POST"
                             className="flex flex-col items-start gap-5 mb-5"
                           >
@@ -257,6 +275,24 @@ const Home: NextPage = (props) => {
               </AnimatePresence>
             </div>
           </div>
+        </div>
+
+        {/* Show API Data  */}
+        <div className="flex flex-row justify-center items-center w-screen relative bg-slate-300">
+          <button onClick={readDB}>Show Books Data</button>
+          {APIResponse.map(
+            (bookData: {
+              bookTitle: string;
+              bookAuthor: string;
+              bookGenere: string;
+            }) => (
+              <div className="flex flex-col">
+                <div>{bookData.bookTitle}</div>
+                <div>{bookData.bookAuthor}</div>
+                <div>{bookData.bookGenere}</div>
+              </div>
+            )
+          )}
         </div>
       </main>
     </div>
